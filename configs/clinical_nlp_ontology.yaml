@@ -1,0 +1,310 @@
+# Clinical NLP EMT Ontology
+# =========================
+
+metadata:
+  version: "1.0"
+  domain: "pathology_report_emt_extraction"
+  target_cancers:
+    - "TCGA-BRCA"
+    - "TCGA-COAD"
+  last_reviewed: "2026-05-19"
+
+global_rules:
+  negations:
+    - "no evidence of"
+    - "negative for"
+    - "not identified"
+    - "absent"
+    - "without evidence of"
+  uncertainty:
+    - "suspicious for"
+    - "cannot exclude"
+    - "concerning for"
+    - "suggestive of"
+    - "equivocal"
+  historical_context:
+    - "prior biopsy showed"
+    - "previous report"
+    - "history of"
+  family_context:
+    - "family history"
+  ignore_sections_for_primary_labels:
+    - "gross description"
+
+sections:
+  diagnosis:
+    priority: 1
+    aliases:
+      - "final diagnosis"
+      - "diagnosis"
+  synoptic_report:
+    priority: 1
+    aliases:
+      - "synoptic report"
+      - "synoptic summary"
+  microscopic_description:
+    priority: 2
+    aliases:
+      - "microscopic description"
+      - "histologic description"
+  comment:
+    priority: 3
+    aliases:
+      - "comment"
+      - "notes"
+  addendum:
+    priority: 3
+    aliases:
+      - "addendum"
+  gross_description:
+    priority: 4
+    aliases:
+      - "gross description"
+
+feature_schema:
+  invasion_type:
+    task: "multiclass_label"
+    allowed_labels:
+      - "ductal"
+      - "lobular"
+      - "adenocarcinoma"
+      - "mucinous"
+      - "mixed"
+      - "other"
+      - "unknown"
+    synonyms:
+      ductal:
+        - "invasive ductal carcinoma"
+        - "idc"
+      lobular:
+        - "invasive lobular carcinoma"
+        - "ilc"
+      adenocarcinoma:
+        - "adenocarcinoma"
+        - "invasive adenocarcinoma"
+      mucinous:
+        - "mucinous adenocarcinoma"
+        - "colloid carcinoma"
+    evidence_sections:
+      - "diagnosis"
+      - "synoptic_report"
+      - "microscopic_description"
+
+  invasive_border:
+    task: "multiclass_label"
+    allowed_labels:
+      - "infiltrative"
+      - "pushing"
+      - "circumscribed"
+      - "mixed"
+      - "unknown"
+    synonyms:
+      infiltrative:
+        - "infiltrative border"
+        - "infiltrating edge"
+        - "infiltrative growth pattern"
+      pushing:
+        - "pushing border"
+        - "expansile border"
+      circumscribed:
+        - "circumscribed border"
+        - "well circumscribed"
+    evidence_sections:
+      - "microscopic_description"
+      - "comment"
+
+  tumor_budding_score:
+    task: "ordinal_label"
+    allowed_labels:
+      - "low"
+      - "intermediate"
+      - "high"
+      - "present_unspecified"
+      - "absent"
+      - "unknown"
+    synonyms:
+      low:
+        - "low tumor budding"
+        - "bd1"
+      intermediate:
+        - "intermediate tumor budding"
+        - "bd2"
+      high:
+        - "high tumor budding"
+        - "bd3"
+      present_unspecified:
+        - "tumor budding present"
+        - "budding identified"
+      absent:
+        - "no tumor budding"
+        - "budding absent"
+    evidence_sections:
+      - "diagnosis"
+      - "synoptic_report"
+      - "microscopic_description"
+
+  stromal_reaction:
+    task: "multiclass_label"
+    allowed_labels:
+      - "desmoplastic"
+      - "inflamed"
+      - "myxoid"
+      - "keloid_like"
+      - "mature"
+      - "immature"
+      - "unknown"
+    synonyms:
+      desmoplastic:
+        - "desmoplastic stroma"
+        - "desmoplastic reaction"
+        - "reactive stroma"
+      inflamed:
+        - "inflamed stroma"
+        - "lymphoplasmacytic stroma"
+      myxoid:
+        - "myxoid stroma"
+      keloid_like:
+        - "keloid-like collagen"
+      mature:
+        - "mature stroma"
+      immature:
+        - "immature stroma"
+    evidence_sections:
+      - "microscopic_description"
+      - "comment"
+
+  fibrosis_or_desmoplasia:
+    task: "binary_plus_unspecified"
+    allowed_labels:
+      - "present"
+      - "absent"
+      - "unknown"
+    synonyms:
+      present:
+        - "fibrotic stroma"
+        - "stromal fibrosis"
+        - "desmoplasia"
+        - "desmoplastic"
+      absent:
+        - "no desmoplasia"
+        - "no stromal fibrosis"
+    evidence_sections:
+      - "microscopic_description"
+      - "comment"
+
+  grade:
+    task: "multiclass_label"
+    allowed_labels:
+      - "well_differentiated"
+      - "moderately_differentiated"
+      - "poorly_differentiated"
+      - "high_grade"
+      - "low_grade"
+      - "grade_1"
+      - "grade_2"
+      - "grade_3"
+      - "unknown"
+    synonyms:
+      well_differentiated:
+        - "well differentiated"
+      moderately_differentiated:
+        - "moderately differentiated"
+      poorly_differentiated:
+        - "poorly differentiated"
+      high_grade:
+        - "high grade"
+      low_grade:
+        - "low grade"
+      grade_1:
+        - "grade 1"
+        - "g1"
+      grade_2:
+        - "grade 2"
+        - "g2"
+      grade_3:
+        - "grade 3"
+        - "g3"
+    evidence_sections:
+      - "diagnosis"
+      - "synoptic_report"
+
+  lymphovascular_invasion:
+    task: "binary_plus_suspicious"
+    allowed_labels:
+      - "present"
+      - "absent"
+      - "suspicious"
+      - "unknown"
+    synonyms:
+      present:
+        - "lymphovascular invasion present"
+        - "lvi identified"
+        - "vascular invasion present"
+      absent:
+        - "lymphovascular invasion not identified"
+        - "no lymphovascular invasion"
+      suspicious:
+        - "suspicious for lymphovascular invasion"
+    evidence_sections:
+      - "diagnosis"
+      - "synoptic_report"
+      - "microscopic_description"
+
+  perineural_invasion:
+    task: "binary_plus_suspicious"
+    allowed_labels:
+      - "present"
+      - "absent"
+      - "suspicious"
+      - "unknown"
+    synonyms:
+      present:
+        - "perineural invasion present"
+        - "pni identified"
+      absent:
+        - "perineural invasion not identified"
+        - "no perineural invasion"
+      suspicious:
+        - "suspicious for perineural invasion"
+    evidence_sections:
+      - "diagnosis"
+      - "synoptic_report"
+      - "microscopic_description"
+
+normalization_rules:
+  case_normalization: "preserve_original_and_store_matching_copy"
+  whitespace_normalization: "collapse_repeated_spaces"
+  punctuation_normalization: true
+  abbreviation_expansion:
+    idc: "invasive ductal carcinoma"
+    ilc: "invasive lobular carcinoma"
+    lvi: "lymphovascular invasion"
+    pni: "perineural invasion"
+    emt: "epithelial mesenchymal transition"
+  section_priority_for_conflicts:
+    - "synoptic_report"
+    - "diagnosis"
+    - "microscopic_description"
+    - "comment"
+    - "addendum"
+    - "gross_description"
+
+evidence_rules:
+  sentence_window: 1
+  token_window: 20
+  cross_sentence_linking: false
+  prefer_high_priority_section_evidence: true
+  negate_if_negation_term_precedes_within_tokens: 8
+  downgrade_to_uncertain_if_uncertainty_term_present: true
+  require_label_specific_synonym_or_regex: true
+
+review_rules:
+  always_review_if:
+    - "multiple_conflicting_labels_same_feature"
+    - "low_document_quality"
+    - "transformer_and_rule_disagree"
+    - "confidence_below_0.60"
+  do_not_autolabel_if:
+    - "only_historical_context_found"
+    - "only_gross_description_evidence_found"
+    - "matched_phrase_is_family_history"

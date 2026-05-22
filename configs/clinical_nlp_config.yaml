@@ -1,0 +1,192 @@
+# Clinical NLP EMT Platform Configuration
+# =======================================
+
+project:
+  name: "Bioptimus-Style Clinical NLP EMT Platform"
+  owner: "Rahul M Sarate"
+  organism: "Homo sapiens"
+  primary_use_case: "TCGA pathology text to molecular EMT linkage"
+  seed: 42
+
+data_sources:
+  gdc_api_base: "https://api.gdc.cancer.gov"
+  gdc_files_endpoint: "/files"
+  gdc_cases_endpoint: "/cases"
+  gdc_data_endpoint: "/data"
+  projects:
+    - "TCGA-BRCA"
+    - "TCGA-COAD"
+  optional_projects:
+    - "TCGA-READ"
+  report_file_filters:
+    data_category:
+      - "Clinical"
+    data_format:
+      - "PDF"
+      - "TXT"
+      - "XML"
+    keyword_allowlist:
+      - "pathology"
+      - "pathology report"
+      - "diagnostic report"
+      - "pathology_report"
+  bulk_rna_filters:
+    data_category:
+      - "Transcriptome Profiling"
+    data_type:
+      - "Gene Expression Quantification"
+    workflow_type:
+      - "STAR - Counts"
+  manifest_dir: "data/metadata/tcga_pathology_emt/manifests"
+  cohort_dir: "data/metadata/tcga_pathology_emt/cohorts"
+  report_download_dir: "data/metadata/tcga_pathology_emt/report_files"
+  bulk_rna_download_dir: "data/counts/tcga_pathology_emt/bulk_rna"
+  download_pathology_reports: false
+  max_pathology_report_downloads: 100
+
+experimental_design:
+  primary_cohorts:
+    - "TCGA-BRCA"
+    - "TCGA-COAD"
+  expansion_cohorts:
+    - "TCGA-READ"
+  matching_key_priority:
+    - "submitter_id"
+    - "case_id"
+  require_matched_bulk_rna: true
+  minimum_cases_per_cohort: 50
+
+cohort_filters:
+  allowed_sample_types:
+    - "Primary Tumor"
+  exclude_sample_types:
+    - "Solid Tissue Normal"
+    - "Metastatic"
+  allow_multiple_reports_per_case: true
+  report_selection_strategy: "latest_preferred_then_highest_text_quality"
+  minimum_report_characters: 500
+  keep_unmatched_reports_for_nlp_only_analysis: true
+
+document_processing:
+  preferred_input_order:
+    - "native_text"
+    - "ocr"
+    - "regex_fallback"
+  native_text_extractors:
+    - "pypdf"
+    - "pymupdf"
+  ocr_enabled: true
+  ocr_backend: "tesseract"
+  ocr_languages:
+    - "eng"
+  ocr_max_pages: 20
+  normalize_unicode: true
+  lowercase_for_matching_only: true
+  preserve_original_text: true
+  section_headers:
+    - "diagnosis"
+    - "final diagnosis"
+    - "microscopic description"
+    - "gross description"
+    - "comment"
+    - "addendum"
+    - "synoptic report"
+  document_quality_thresholds:
+    min_alpha_ratio: 0.60
+    min_nonempty_sections: 1
+    max_ocr_noise_ratio: 0.25
+  autoswitch:
+    enable_memory_guard: true
+    max_ram_gb: 9.0
+    fallback_on_low_quality: true
+    fallback_on_oom_risk: true
+
+annotation_strategy:
+  gold_set_target_reports: 200
+  gold_set_sampling: "stratified_by_cohort_and_report_style"
+  weak_supervision_enabled: true
+  disagreement_sampling_enabled: true
+  review_queue_batch_size: 25
+
+baseline_models:
+  regex_extractor_enabled: true
+  context_pipeline_enabled: true
+  context_window_tokens: 20
+  negation_scope_tokens: 10
+  tfidf_classifier:
+    enabled: true
+    ngram_range: [1, 2]
+    min_df: 3
+    max_features: 20000
+    classifier: "logistic_regression"
+    class_weight: "balanced"
+
+transformer_model:
+  enabled: true
+  model_name: "microsoft/BiomedNLP-PubMedBERT-base-uncased-abstract-fulltext"
+  alternative_model_name: "dmis-lab/biobert-base-cased-v1.2"
+  task_mode: "multitask_extraction_plus_document_classification"
+  max_length: 512
+  stride: 128
+  batch_size: 4
+  learning_rate: 0.00002
+  epochs: 3
+  early_stopping_patience: 2
+  calibration_enabled: true
+
+emt_scoring:
+  score_method: "ssgsea_or_rank_based_signature_mean"
+  label_strategy: "cohort_specific_quantiles"
+  high_quantile: 0.67
+  low_quantile: 0.33
+  discard_mid_band_for_binary_training: true
+  signature_sets:
+    - "project_humanized_emt"
+    - "hallmark_epithelial_mesenchymal_transition"
+  gene_id_type: "hgnc_symbol"
+  normalization: "log1p_tpm_or_harmonized_counts_rule_defined_in_script"
+  expression_column_priority:
+    - "tpm_unstranded"
+    - "fpkm_uq_unstranded"
+    - "fpkm_unstranded"
+    - "unstranded"
+
+benchmarking:
+  baseline_rows:
+    - "manual_abstraction_proxy"
+    - "cap_style_structured_reporting_proxy"
+    - "regex_only"
+    - "regex_plus_context"
+    - "tfidf_logreg"
+    - "pubmedbert_multitask"
+  metrics:
+    - "extraction_macro_f1"
+    - "emt_auc"
+    - "emt_auprc"
+    - "calibration_brier"
+    - "feature_emt_correlation"
+    - "reports_per_hour"
+    - "review_burden_minutes_per_100_reports"
+    - "peak_ram_gb"
+  primary_selection_metric: "emt_auc"
+
+dashboard:
+  enabled: true
+  export_dir: "analysis/clinical_nlp/dashboard"
+  pages:
+    - "pathology_overview"
+    - "report_review"
+    - "feature_evidence"
+    - "molecular_concordance"
+    - "benchmark_matrix"
+  default_cohort: "TCGA-BRCA"
+
+output:
+  normalized_reports: "analysis/clinical_nlp/normalized/normalized_reports.parquet"
+  weak_labels: "analysis/clinical_nlp/annotation/weak_labels.parquet"
+  baseline_features: "analysis/clinical_nlp/features/baseline_extracted_features.parquet"
+  transformer_predictions: "analysis/clinical_nlp/models/transformer_predictions.parquet"
+  emt_scores: "analysis/clinical_nlp/molecular/tcga_bulk_emt_scores.csv"
+  patient_matrix: "analysis/clinical_nlp/integration/patient_feature_matrix.parquet"
+  benchmark_matrix: "analysis/clinical_nlp/benchmarks/benchmark_matrix.csv"
+  report_summary: "reports/clinical_nlp/bioptimus_multimodal_emt_summary.md"

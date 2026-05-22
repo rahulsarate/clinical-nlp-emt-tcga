@@ -1,0 +1,148 @@
+{
+  "invasion_type": {
+    "ductal": [
+      "\\binvasive ductal carcinoma\\b",
+      "\\bidc\\b"
+    ],
+    "lobular": [
+      "\\binvasive lobular carcinoma\\b",
+      "\\bilc\\b"
+    ],
+    "adenocarcinoma": [
+      "\\badenocarcinoma\\b",
+      "\\binvasive adenocarcinoma\\b"
+    ],
+    "mucinous": [
+      "\\bmucinous adenocarcinoma\\b",
+      "\\bcolloid carcinoma\\b"
+    ]
+  },
+  "invasive_border": {
+    "infiltrative": [
+      "\\binfiltrative border\\b",
+      "\\binfiltrating edge\\b",
+      "\\binfiltrative growth pattern\\b"
+    ],
+    "pushing": [
+      "\\bpushing border\\b",
+      "\\bexpansile border\\b"
+    ],
+    "circumscribed": [
+      "\\bcircumscribed border\\b",
+      "\\bwell circumscribed\\b"
+    ]
+  },
+  "tumor_budding_score": {
+    "low": [
+      "\\blow tumor budding\\b",
+      "\\bbd1\\b"
+    ],
+    "intermediate": [
+      "\\bintermediate tumor budding\\b",
+      "\\bbd2\\b"
+    ],
+    "high": [
+      "\\bhigh tumor budding\\b",
+      "\\bbd3\\b"
+    ],
+    "present_unspecified": [
+      "\\btumor budding present\\b",
+      "\\bbudding identified\\b"
+    ],
+    "absent": [
+      "\\bno tumor budding\\b",
+      "\\bbudding absent\\b"
+    ]
+  },
+  "stromal_reaction": {
+    "desmoplastic": [
+      "\\bdesmoplastic stroma\\b",
+      "\\bdesmoplastic reaction\\b",
+      "\\breactive stroma\\b"
+    ],
+    "inflamed": [
+      "\\binflamed stroma\\b",
+      "\\blymphoplasmacytic stroma\\b"
+    ],
+    "myxoid": [
+      "\\bmyxoid stroma\\b"
+    ],
+    "keloid_like": [
+      "\\bkeloid-like collagen\\b"
+    ],
+    "mature": [
+      "\\bmature stroma\\b"
+    ],
+    "immature": [
+      "\\bimmature stroma\\b"
+    ]
+  },
+  "fibrosis_or_desmoplasia": {
+    "present": [
+      "\\bfibrotic stroma\\b",
+      "\\bstromal fibrosis\\b",
+      "\\bdesmoplasia\\b",
+      "\\bdesmoplastic\\b"
+    ],
+    "absent": [
+      "\\bno desmoplasia\\b",
+      "\\bno stromal fibrosis\\b"
+    ]
+  },
+  "grade": {
+    "well_differentiated": [
+      "\\bwell differentiated\\b"
+    ],
+    "moderately_differentiated": [
+      "\\bmoderately differentiated\\b"
+    ],
+    "poorly_differentiated": [
+      "\\bpoorly differentiated\\b"
+    ],
+    "high_grade": [
+      "\\bhigh grade\\b"
+    ],
+    "low_grade": [
+      "\\blow grade\\b"
+    ],
+    "grade_1": [
+      "\\bgrade 1\\b",
+      "\\bg1\\b"
+    ],
+    "grade_2": [
+      "\\bgrade 2\\b",
+      "\\bg2\\b"
+    ],
+    "grade_3": [
+      "\\bgrade 3\\b",
+      "\\bg3\\b"
+    ]
+  },
+  "lymphovascular_invasion": {
+    "present": [
+      "\\blymphovascular invasion present\\b",
+      "\\blvi identified\\b",
+      "\\bvascular invasion present\\b"
+    ],
+    "absent": [
+      "\\blymphovascular invasion not identified\\b",
+      "\\bno lymphovascular invasion\\b"
+    ],
+    "suspicious": [
+      "\\bsuspicious for lymphovascular invasion\\b"
+    ]
+  },
+  "perineural_invasion": {
+    "present": [
+      "\\bperineural invasion present\\b",
+      "\\bpni identified\\b"
+    ],
+    "absent": [
+      "\\bperineural invasion not identified\\b",
+      "\\bno perineural invasion\\b"
+    ],
+    "suspicious": [
+      "\\bsuspicious for perineural invasion\\b"
+    ]
+  }
+}

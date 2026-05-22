@@ -1,0 +1,7 @@
+model_name,extraction_macro_f1,emt_auc,emt_auprc,calibration_brier,feature_emt_correlation,reports_per_hour,review_burden_minutes_per_100_reports,peak_ram_gb
+manual_abstraction_proxy,,,,,,,,
+cap_style_structured_reporting_proxy,,,,,,,,
+regex_only,,,,,,,,
+regex_plus_context,,0.4445470401149072,0.46751844084022,0.3580043859649123,-0.22600637233726778,,,
+tfidf_logreg,0.6826582163249023,0.4727194768999893,0.4925747078960541,0.3018309728951235,0.007650055482639536,,,
+pubmedbert_multitask,0.1629629629629629,,,,,,,
